@@ -1,7 +1,7 @@
 import { SET_USER } from './AuthActions';
 
 const initialState = {
-    id: 0,
+    id: null,
     login: null,
     exp: 0
 };
@@ -17,4 +17,4 @@ export const authReducer = (state = initialState, action) => {
         default:
             return state;
     }
-}
+};

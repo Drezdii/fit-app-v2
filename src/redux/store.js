@@ -1,8 +1,10 @@
 import { combineReducers, createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import { authReducer } from '../Auth/AuthReducer';
+import { challengesReducer } from '../Challenges/ChallengesReducer';
+import { workoutsReducer } from '../Workouts/WorkoutsReducer';
 
-const reducers = combineReducers({ user: authReducer});
+const reducers = combineReducers({ user: authReducer, challenges: challengesReducer, workouts: workoutsReducer });
 
 // Clean up the user slice of the state on logout
 const rootReducer = (state, action) => {

@@ -1,4 +1,4 @@
-function isTokenValid(token) {
+export const isTokenValid = token => {
 
     const tokenIssuer = 'fitapp';
 
@@ -17,24 +17,16 @@ function isTokenValid(token) {
         return false;
     }
 
-    // Check if issuer is valid
-    if (data.iss !== tokenIssuer) {
-        console.log('Wrong issuer');
-        return false;
-    }
-
     return true;
-}
+};
 
-export function getPayload(token) {
+export const getPayload = token => {
     // Get payload from token
     const payload = token.split('.')[1];
 
     // Decode base64 payload string
     let data = atob(payload);
 
-    // Parse string into a json object
+    // Parse the string into a json object
     return data = JSON.parse(data);
-}
-
-export default isTokenValid;
+};
