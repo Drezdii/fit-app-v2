@@ -88,7 +88,7 @@ export const Exercise = props => {
 
     let allSets = [];
 
-    if(exercise){
+    if (exercise) {
         allSets = [...exercise.sets, ...addedSetsIDs];
     }
 
