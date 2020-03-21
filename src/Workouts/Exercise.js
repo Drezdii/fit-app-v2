@@ -1,35 +1,15 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
-import { WorkoutSet } from './WorkoutSet';
 import { ExerciseName } from '../StyledComponents';
 import { saveExerciseChanges } from './WorkoutsActions';
 import { motion } from 'framer-motion';
-import shortid from 'shortid';
-
-const SetsContainer = styled.div`
-`;
+import { WorkoutSetsList } from './WorkoutSetsList';
 
 const StyledExercise = styled.div`
 margin-right: 5%;
 display: flex;
 flex-direction: column;
-`;
-
-const SaveButton = styled.button`
-background: #3075bf;
-border: 0px;
-color: white;
-cursor: pointer;
-`;
-
-const CancelButton = styled(SaveButton)`
-background: red;
-cursor: pointer;
-`;
-
-const AddSetButton = styled(SaveButton)`
-background: green;
 `;
 
 const SavingAnimation = styled(motion.div)`
@@ -75,33 +55,16 @@ const loadingVariant = {
 
 export const Exercise = props => {
     const exercise = useSelector(state => state.workouts.exercises[props.id]);
+    const sets = useSelector(state => state.workouts.sets);
     const exInfoID = exercise ? exercise.exerciseInfo : 0;
     const exerciseInfo = useSelector(state => state.workouts.exerciseInfo[exInfoID]);
-    const sets = useSelector(state => state.workouts.sets);
-    const [editedSets, setEditedSets] = useState({});
-    const [addedSetsIDs, setAddedSetsIDs] = useState([]);
     const [hasSucceeded, setHasSucceeded] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [showLoading, setShowLoading] = useState(false);
 
     const dispatch = useDispatch();
 
-    let allSets = [];
-
-    if(exercise){
-        allSets = [...exercise.sets, ...addedSetsIDs];
-    }
-
-    const handleChange = set => {
-        setEditedSets({ ...editedSets, [set.id]: { ...set } });
-    };
-
-    const clearSets = () => {
-        setEditedSets({});
-        setAddedSetsIDs([]);
-    };
-
-    const saveChanges = () => {
+    const saveChanges = editedSets => {
         if (!isSaving) {
             const exercise =
             {
@@ -119,16 +82,6 @@ export const Exercise = props => {
         }
     };
 
-    const cancelChanges = () => {
-        // Reset the editedSets object
-        clearSets();
-    };
-
-    const addSet = () => {
-        const id = shortid.generate();
-        setAddedSetsIDs([...addedSetsIDs, id]);
-        setEditedSets({ ...editedSets, [id]: { id, reps: 0, weight: 0, completed: false, exerciseID: props.id } });
-    };
 
     useEffect(() => {
         if (!isSaving)
@@ -148,10 +101,9 @@ export const Exercise = props => {
         setIsSaving(false);
         setHasSucceeded(true);
         setShowLoading(false);
-        clearSets();
+        // clearSets();
     };
 
-    const hasEditedSets = Object.keys(editedSets).length !== 0;
     return (
         <StyledExercise>
             <ExerciseName
@@ -173,28 +125,10 @@ export const Exercise = props => {
                 }
 
             </ExerciseName>
-            <div>
-                {hasEditedSets ? <SaveButton onClick={saveChanges}>Save changes</SaveButton> : null}
-                {hasEditedSets ? <CancelButton onClick={cancelChanges}>Cancel</CancelButton> : null}
-                {<AddSetButton onClick={addSet}>Add set</AddSetButton>}
-            </div>
-            <SetsContainer>
-                {
-                    exercise != null ?
-                        <div>
-                            {allSets.map(id => {
-                                let set = sets[id];
-                                // Pass the set from the state if it has been edited
-                                if (Object.keys(editedSets).includes(id.toString())) {
-                                    set = editedSets[id];
-                                }
-
-                                return <WorkoutSet set={set} key={id} handleChange={handleChange} />;
-                            })}
-                        </div>
-                        : 'No sets to show'
-                }
-            </SetsContainer>
+            {exercise != null
+                ? < WorkoutSetsList sets={sets} exercise={exercise} saveChanges={saveChanges} />
+                : null
+            }
         </StyledExercise >
     );
 };

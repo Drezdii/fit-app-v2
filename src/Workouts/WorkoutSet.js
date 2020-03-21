@@ -67,6 +67,10 @@ display: flex;
 margin-top: 5px;
 `;
 
+const Remove = styled.button`
+border: 0px;
+`;
+
 
 // Rename from Set to not collide with build-in Set class
 export const WorkoutSet = ({ set, handleChange }) => {
