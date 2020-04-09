@@ -40,7 +40,9 @@ export const WorkoutSetsList = props => {
     };
 
     const saveChanges = () => {
-        props.saveChanges({ editedSets, deletedSetsIDs });
+        props.saveChanges({ editedSets, deletedSetsIDs })
+            .then(() => { clearSets(); })
+            .catch(e => console.log(e));
     };
 
     const addSet = () => {

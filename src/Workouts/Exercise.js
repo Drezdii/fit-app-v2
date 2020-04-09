@@ -38,6 +38,15 @@ const variants = {
             duration: 0.7
         },
         backgroundColor: '#3E4A65',
+    },
+    failed: {
+        backgroundColor: '#e33814',
+        color: 'rgb(255, 255, 255)',
+        transition: {
+            duration: 0.7,
+            // Display 'Saved' text for another 0.5s after finishing the animation
+            repeatDelay: 0.5
+        }
     }
 };
 
@@ -59,30 +68,28 @@ export const Exercise = props => {
     const exInfoID = exercise ? exercise.exerciseInfo : 0;
     const exerciseInfo = useSelector(state => state.workouts.exerciseInfo[exInfoID]);
     const [hasSucceeded, setHasSucceeded] = useState(false);
+    const [hasFailed, setHasFailed] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [showLoading, setShowLoading] = useState(false);
 
     const dispatch = useDispatch();
 
     const saveChanges = (changes) => {
-        if (!isSaving) {
-            const exercise =
-            {
-                ID: props.id,
-                sets: Object.values(changes.editedSets).map(set => {
-                    return {
-                        ...set,
-                        // Use ID of 0 if its an added set
-                        id: Number(set.id) || 0
-                    };
-                }),
-                deletedSetsIDs: changes.deletedSetsIDs
-            };
-            setIsSaving(true);
-            dispatch(saveExerciseChanges(exercise));
-        }
+        const exercise =
+        {
+            ID: props.id,
+            sets: Object.values(changes.editedSets).map(set => {
+                return {
+                    ...set,
+                    // Use ID of 0 if its an added set
+                    id: Number(set.id) || 0
+                };
+            }),
+            deletedSetsIDs: changes.deletedSetsIDs
+        };
+        setIsSaving(true);
+        return dispatch(saveExerciseChanges(exercise)).then(() => { onSuccess(); }).catch(e => { onError(); return Promise.reject(e); });
     };
-
 
     useEffect(() => {
         if (!isSaving)
@@ -104,18 +111,22 @@ export const Exercise = props => {
         setShowLoading(false);
     };
 
+    const onError = () => {
+        setIsSaving(false);
+        setShowLoading(false);
+        setHasFailed(true);
+    };
+
+    const animationState = hasFailed ? 'failed' : hasSucceeded ? 'active' : 'inActive';
+    let textState = hasFailed ? 'Failed' : showLoading ? 'Saving' : hasSucceeded ? 'Saved' : exerciseInfo ? exerciseInfo.name : 'Exercise';
     return (
         <StyledExercise>
             <ExerciseName
-                animate={hasSucceeded ? 'active' : 'inActive'}
+                animate={animationState}
                 variants={variants}
-                onAnimationComplete={() => { setHasSucceeded(false); }}>
+                onAnimationComplete={() => { setHasSucceeded(false); setHasFailed(false); }}>
 
-                {showLoading ? 'Saving' :
-                    hasSucceeded ?
-                        'Saved' :
-                        exerciseInfo ? exerciseInfo.name : 'Exercise'
-                }
+                {textState}
                 {showLoading ?
                     <SavingAnimation
                         animate={'saving'}

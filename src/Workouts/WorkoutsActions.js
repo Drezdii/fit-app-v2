@@ -50,10 +50,11 @@ export const saveExerciseChanges = (exercise) => {
                 sets: normalizedSets.entities.sets
             };
             dispatch(_updateExercise(obj));
-
+            return Promise.resolve();
         }
         catch (e) {
             console.log(e);
+            return Promise.reject(e);
         }
     };
 };
