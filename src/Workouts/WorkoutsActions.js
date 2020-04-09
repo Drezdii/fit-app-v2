@@ -37,28 +37,24 @@ export const getWorkoutsByUserID = userID => {
     };
 };
 
-export const saveExerciseChanges = (exercise, onSuccess) => {
-    console.log(exercise);
+export const saveExerciseChanges = (exercise) => {
     return async dispatch => {
         try {
-            var response = await apiSaveExerciseChanges(exercise.id, exercise);
-
+            const response = await apiSaveExerciseChanges(exercise.id, exercise);
             const sets = new schema.Entity('sets', {
                 sets: ['sets'],
             });
             const normalizedSets = normalize(response.data.sets, [sets]);
-
             const obj = {
                 ...response.data,
                 sets: normalizedSets.entities.sets
             };
-
             dispatch(_updateExercise(obj));
-
-            onSuccess();
+            return Promise.resolve();
         }
         catch (e) {
-            console.log(e.response);
+            console.log(e);
+            return Promise.reject(e);
         }
     };
 };

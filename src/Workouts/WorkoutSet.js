@@ -67,9 +67,13 @@ display: flex;
 margin-top: 5px;
 `;
 
+const Remove = styled.button`
+border: 0px;
+`;
+
 
 // Rename from Set to not collide with build-in Set class
-export const WorkoutSet = ({ set, handleChange }) => {
+export const WorkoutSet = ({ set, handleChange, handleRemove }) => {
     const handleReps = input => {
         const newSet = {
             ...set,
@@ -110,6 +114,9 @@ export const WorkoutSet = ({ set, handleChange }) => {
                     {<input value={set.reps} onChange={handleReps} />}
                 x
                 {<input value={set.weight} onChange={handleWeight} />}
+                </div>
+                <div>
+                    <button onClick={() => handleRemove(set.id)}>X</button>
                 </div>
             </Container>
             : null
