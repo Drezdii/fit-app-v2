@@ -14,8 +14,24 @@ height: 100vh;
 display: flex;
 flex-direction: column;
 align-items: center;
+background: rgb(235, 235, 235);
 justify-content: center;
+`;
+
+export const AuthTitle = styled.p`
+font-weight: 200;
+text-align: center;
+color: white;
+font-size: 25px;
+`;
+
+export const AuthBox = styled.div`
 background: rgb(62, 74, 101);
+`;
+
+export const AuthItem = styled.div`
+margin: 20px 30px 0px 30px;
+text-align: center;
 `;
 
 export const AuthContainer = styled.div`
@@ -26,25 +42,26 @@ flex-direction: column;
 export const Field = styled.input`
 border: none;
 padding: 5px;
-margin: 10px 0px;
-border-radius: 3px;
 font-size: 1.3em;
 text-align: center;
 `;
 
 export const Button = styled.button`
+width: 50%;
+color: black;
 border: 0px;
+text-align: center;
 cursor: pointer;
-border-radius: 2px;
-margin: 10px 0px;
-background: white;
-padding: 5px;
+margin: 10px;
+padding: 10px;
+
 &:hover{
     background: #e4e4e4
 }
 `;
 
-export const Error = styled.span`
+export const Error = styled.p`
+margin: 0px;
 color: red;
 padding: 5px;
 text-align: center;

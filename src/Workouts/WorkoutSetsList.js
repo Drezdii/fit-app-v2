@@ -24,6 +24,7 @@ background: green;
 export const WorkoutSetsList = props => {
     const [editedSets, setEditedSets] = useState({});
     const [addedSetsIDs, setAddedSetsIDs] = useState([]);
+    const [deletedSetsIDs, setDeletedSetsIDs] = useState([]);
 
     const handleChange = set => {
         setEditedSets({ ...editedSets, [set.id]: { ...set } });
@@ -34,13 +35,12 @@ export const WorkoutSetsList = props => {
         setAddedSetsIDs([]);
     };
 
-    const cancelChanges = () => {
-        // Reset the editedSets object
-        clearSets();
+    const removeSet = id => {
+        setDeletedSetsIDs([...new Set([...deletedSetsIDs, id])]);
     };
 
     const saveChanges = () => {
-        props.saveChanges(editedSets);
+        props.saveChanges({ editedSets, deletedSetsIDs });
     };
 
     const addSet = () => {
@@ -50,14 +50,12 @@ export const WorkoutSetsList = props => {
     };
 
     const allSets = [...props.exercise.sets, ...addedSetsIDs];
-    console.log(allSets);
-
-    const hasEditedSets = Object.keys(editedSets).length !== 0;
+    const hasEditedSets = Object.keys(editedSets).length !== 0 || deletedSetsIDs.length !== 0;
     return (
         <>
             <div>
                 {hasEditedSets ? <SaveButton onClick={saveChanges}>Save changes</SaveButton> : null}
-                {hasEditedSets ? <CancelButton onClick={cancelChanges}>Cancel</CancelButton> : null}
+                {hasEditedSets ? <CancelButton onClick={clearSets}>Cancel</CancelButton> : null}
                 {<AddSetButton onClick={addSet}>Add set</AddSetButton>}
             </div>
             <SetsContainer>
@@ -65,13 +63,16 @@ export const WorkoutSetsList = props => {
                     props.exercise != null ?
                         <div>
                             {allSets.map(id => {
+                                if (deletedSetsIDs.includes(id)) {
+                                    return null;
+                                }
                                 let set = props.sets[id];
-                                // Pass the set from the state if it has been edited
+                                // If the set with the given ID has been edited, use values from editedSets
                                 if (Object.keys(editedSets).includes(id.toString())) {
                                     set = editedSets[id];
                                 }
 
-                                return <WorkoutSet set={set} key={id} handleChange={handleChange} />;
+                                return <WorkoutSet set={set} key={id} handleChange={handleChange} handleRemove={removeSet} />;
                             })}
                         </div>
                         : 'No sets to show'

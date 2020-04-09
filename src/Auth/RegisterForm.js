@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { AuthWrapper, AuthContainer, Field, Button, Error, StyledLink } from '../StyledComponents';
+import { AuthWrapper, AuthContainer, AuthTitle, AuthItem, Field, Button, Error, StyledLink, AuthBox } from '../StyledComponents';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { useHistory } from 'react-router-dom';
@@ -8,14 +8,11 @@ import { setUser } from './AuthActions';
 import { useDispatch } from 'react-redux';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import axios from 'axios';
 import { apiRegisterUser } from '../api';
 
 export const RegisterForm = () => {
-
     const validationSchema = Yup.object({
         login: Yup.string().min(3, 'At least 3 characters'),
-        //email: Yup.string().email(),
         password: Yup.string().min(8, 'At least 8 characters'),
         confirmPassword: Yup.string().oneOf([Yup.ref('password'), null], 'Passwords must match')
     });
@@ -72,7 +69,7 @@ export const RegisterForm = () => {
                 });
                 actions.setStatus(apiErrors);
             }
-            else{
+            else {
                 actions.setStatus({
                     api: 'Something went wrong. Try again.'
                 });
@@ -97,24 +94,35 @@ export const RegisterForm = () => {
     return (
         // Call setFieldTouched in onInput event to start validating the fields onChanged instead of onBlur
         <AuthWrapper>
-            <form onSubmit={formik.handleSubmit}>
-                <AuthContainer>
-                    <Field placeholder="Login" name="login" onChange={formik.handleChange} onFocus={formik.handleBlur} onInput={() => formik.setFieldTouched('login', true, true)} />
-                    {formik.status && formik.status.login ? <Error>{formik.status.login}</Error> : loginError ? <Error>{formik.errors.login}</Error> : null}
+            <AuthBox>
+                <form onSubmit={formik.handleSubmit}>
+                    <AuthTitle>FIT APP</AuthTitle>
+                    <AuthContainer>
+                        <AuthItem>
+                            <Field placeholder="Login" name="login" onChange={formik.handleChange} onFocus={formik.handleBlur} onInput={() => formik.setFieldTouched('login', true, true)} />
+                            {formik.status && formik.status.login ? <Error>{formik.status.login}</Error> : loginError ? <Error>{formik.errors.login}</Error> : null}
+                        </AuthItem>
+                        <AuthItem>
+                            <Field placeholder="Email" name="email" onChange={formik.handleChange} onInput={() => formik.setFieldTouched('email', true, true)} />
+                            {formik.status && formik.status.email ? <Error>{formik.status.email}</Error> : emailError ? <Error>{formik.errors.email}</Error> : null}
+                        </AuthItem>
 
-                    <Field placeholder="Email" name="email" onChange={formik.handleChange} onInput={() => formik.setFieldTouched('email', true, true)} />
-                    {formik.status && formik.status.email ? <Error>{formik.status.email}</Error> : emailError ? <Error>{formik.errors.email}</Error> : null}
-
-                    <Field placeholder="Password" name="password" type="password" onInput={() => formik.setFieldTouched('password', true, true)} onChange={formik.handleChange} />
-                    {formik.status && formik.status.password ? <Error>{formik.status.password}</Error> : passwordError ? <Error>{formik.errors.password}</Error> : null}
-
-                    <Field placeholder="Confirm password" name="confirmPassword" type="password" onChange={formik.handleChange} onInput={() => formik.setFieldTouched('confirmPassword', true, true)} />
-                    {formik.status && formik.status.confirmPassword ? <Error>{formik.status.confirmPassword}</Error> : confirmPasswordError ? <Error>{formik.errors.confirmPassword}</Error> : null}
-                    {formik.status && formik.status.api ? <Error>{formik.status.api}</Error> : null}
-                    <StyledLink to="/login">Login</StyledLink>
-                    <Button type="submit">{formik.isSubmitting ? <FontAwesomeIcon icon={faSpinner} spin /> : 'Register'}</Button>
-                </AuthContainer>
-            </form>
+                        <AuthItem>
+                            <Field placeholder="Password" name="password" type="password" onInput={() => formik.setFieldTouched('password', true, true)} onChange={formik.handleChange} />
+                            {formik.status && formik.status.password ? <Error>{formik.status.password}</Error> : passwordError ? <Error>{formik.errors.password}</Error> : null}
+                        </AuthItem>
+                        <AuthItem>
+                            <Field placeholder="Confirm password" name="confirmPassword" type="password" onChange={formik.handleChange} onInput={() => formik.setFieldTouched('confirmPassword', true, true)} />
+                            {formik.status && formik.status.confirmPassword ? <Error>{formik.status.confirmPassword}</Error> : confirmPasswordError ? <Error>{formik.errors.confirmPassword}</Error> : null}
+                            {formik.status && formik.status.api ? <Error>{formik.status.api}</Error> : null}
+                        </AuthItem>
+                        <StyledLink to="/login">Login</StyledLink>
+                        <AuthItem>
+                            <Button type="submit">{formik.isSubmitting ? <FontAwesomeIcon icon={faSpinner} spin /> : 'Register'}</Button>
+                        </AuthItem>
+                    </AuthContainer>
+                </form>
+            </AuthBox>
         </AuthWrapper>
     );
 };

@@ -41,11 +41,26 @@ export const workoutsReducer = (state = initialState, action) => {
             };
 
         case UPDATE_EXERCISE:
+            // Cast all IDs to ints
+            // Default to an empty array because removing sets will pass empty sets array to this reducer
+            const sets = action.data.sets !== undefined ? Object.keys(action.data.sets).map(id => Number(id)) : [];
+            // All sets with deleted sets filtered out
+            const filteredSets = [...state.exercises[action.data.id].sets, ...sets];
+            //.filter(id => !action.data.deletedSets.includes(id));
             return {
                 ...state,
                 sets: {
                     ...state.sets,
                     ...action.data.sets
+                },
+                exercises: {
+                    ...state.exercises,
+                    // Add SetsIDs to the exercise with given ID
+                    [action.data.id]: {
+                        ...state.exercises[action.data.id],
+                        // Use Set to only add unique values (the same setID kept getting added when updating reps/weight)
+                        sets: [...new Set(filteredSets)]
+                    }
                 }
             };
         case ADD_SETS:

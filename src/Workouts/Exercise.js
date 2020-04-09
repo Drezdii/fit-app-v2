@@ -64,21 +64,22 @@ export const Exercise = props => {
 
     const dispatch = useDispatch();
 
-    const saveChanges = editedSets => {
+    const saveChanges = (changes) => {
         if (!isSaving) {
             const exercise =
             {
                 ID: props.id,
-                sets: Object.values(editedSets).map(set => {
+                sets: Object.values(changes.editedSets).map(set => {
                     return {
                         ...set,
+                        // Use ID of 0 if its an added set
                         id: Number(set.id) || 0
                     };
-                })
+                }),
+                deletedSetsIDs: changes.deletedSetsIDs
             };
-            console.log(exercise);
             setIsSaving(true);
-            dispatch(saveExerciseChanges(exercise, onSucces));
+            dispatch(saveExerciseChanges(exercise));
         }
     };
 
@@ -97,11 +98,10 @@ export const Exercise = props => {
         return () => clearTimeout(timer);
     }, [isSaving]);
 
-    const onSucces = () => {
+    const onSuccess = () => {
         setIsSaving(false);
         setHasSucceeded(true);
         setShowLoading(false);
-        // clearSets();
     };
 
     return (
@@ -123,7 +123,6 @@ export const Exercise = props => {
                     />
                     : null
                 }
-
             </ExerciseName>
             {exercise != null
                 ? < WorkoutSetsList sets={sets} exercise={exercise} saveChanges={saveChanges} />
