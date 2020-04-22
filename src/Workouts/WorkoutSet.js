@@ -77,7 +77,7 @@ export const WorkoutSet = ({ set, handleChange, handleRemove }) => {
     const handleReps = input => {
         const newSet = {
             ...set,
-            reps: Number(input.target.value)
+            reps: Number(input.target.value) || 0 // Default to 0 if NaN was provided
         };
 
         handleChange(newSet);
@@ -86,7 +86,7 @@ export const WorkoutSet = ({ set, handleChange, handleRemove }) => {
     const handleWeight = input => {
         const newSet = {
             ...set,
-            weight: Number(input.target.value)
+            weight: Number(input.target.value) || 0 // Default to 0 if NaN was provided
         };
 
         handleChange(newSet);

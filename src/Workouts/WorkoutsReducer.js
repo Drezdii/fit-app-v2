@@ -1,4 +1,4 @@
-import { ADD_WORKOUTS, ADD_NEW_WORKOUT, ADD_EXERCISES, ADD_SETS, ADD_EXERCISES_INFO, UPDATE_EXERCISE } from './WorkoutsActions';
+import { ADD_WORKOUTS, ADD_NEW_WORKOUT, ADD_EXERCISES, ADD_SETS, ADD_EXERCISES_INFO, UPDATE_EXERCISE, DELETE_EXERCISE } from './WorkoutsActions';
 
 const initialState = {
     byId: {},
@@ -37,6 +37,20 @@ export const workoutsReducer = (state = initialState, action) => {
                 exercises: {
                     ...state.exercises,
                     ...action.data
+                }
+            };
+
+        case DELETE_EXERCISE:
+            const exercisesCopy = { ...state.exercises };
+            delete exercisesCopy[action.data.id];
+            return {
+                ...state,
+                byId: {
+                    ...state.byId,
+                    [action.data.workoutID]: {
+                        ...state.byId[action.data.workoutID],
+                        exercises: state.byId[action.data.workoutID].exercises.filter(id => id !== action.data.exerciseID)
+                    }
                 }
             };
 

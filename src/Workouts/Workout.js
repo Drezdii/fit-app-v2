@@ -1,8 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Exercise } from './Exercise';
 import moment from 'moment';
+import { deleteExercise } from './WorkoutsActions';
 
 const ExercisesContainer = styled.div`
 display: flex;
@@ -18,6 +19,13 @@ padding: 10px 10px;
 
 export const Workout = props => {
     const workout = useSelector(state => state.workouts.byId[props.id]);
+
+    const dispatch = useDispatch();
+
+    const removeExercise = (exerciseId) => {
+        dispatch(deleteExercise(props.id, exerciseId));
+    };
+
     return (
         <StyledWorkout>
             <p>{moment(workout.date).format('ddd, Do MMMM YYYY')}</p>
@@ -25,7 +33,7 @@ export const Workout = props => {
                 {workout && workout.exercises ?
                     <>
                         {workout.exercises.map(id => {
-                            return <Exercise id={id} key={id} />;
+                            return <Exercise id={id} key={id} removeExercise={removeExercise} />;
                         })}
                     </>
                     : 'Could not load exercises. Try again.'}

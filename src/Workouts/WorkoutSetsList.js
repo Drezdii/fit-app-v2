@@ -21,10 +21,16 @@ const AddSetButton = styled(SaveButton)`
 background: green;
 `;
 
+const DeleteExerciseButton = styled(SaveButton)`
+background: blue;
+`;
+
 export const WorkoutSetsList = props => {
     const [editedSets, setEditedSets] = useState({});
     const [addedSetsIDs, setAddedSetsIDs] = useState([]);
     const [deletedSetsIDs, setDeletedSetsIDs] = useState([]);
+
+    const allSets = [...props.exercise.sets, ...addedSetsIDs];
 
     const handleChange = set => {
         setEditedSets({ ...editedSets, [set.id]: { ...set } });
@@ -36,7 +42,16 @@ export const WorkoutSetsList = props => {
     };
 
     const removeSet = id => {
-        setDeletedSetsIDs([...new Set([...deletedSetsIDs, id])]);
+        if (addedSetsIDs.includes(id)) {
+            console.log(id);
+            const editedSetsCopy = { ...editedSets };
+            delete editedSetsCopy[id];
+
+            setEditedSets(editedSetsCopy);
+        }
+        else {
+            setDeletedSetsIDs([...new Set([...deletedSetsIDs, id])]);
+        }
     };
 
     const saveChanges = () => {
@@ -48,10 +63,10 @@ export const WorkoutSetsList = props => {
     const addSet = () => {
         const id = shortid.generate();
         setAddedSetsIDs([...addedSetsIDs, id]);
-        setEditedSets({ ...editedSets, [id]: { id, reps: 0, weight: 0, completed: false, exerciseID: props.exercise.id } });
+        // Add a new empty set to the list of edited sets
+        setEditedSets({ ...editedSets, [id]: { id, reps: 0, weight: 0, completed: true, exerciseID: props.exercise.id } });
     };
 
-    const allSets = [...props.exercise.sets, ...addedSetsIDs];
     const hasEditedSets = Object.keys(editedSets).length !== 0 || deletedSetsIDs.length !== 0;
     return (
         <>
@@ -59,6 +74,7 @@ export const WorkoutSetsList = props => {
                 {hasEditedSets ? <SaveButton onClick={saveChanges}>Save changes</SaveButton> : null}
                 {hasEditedSets ? <CancelButton onClick={clearSets}>Cancel</CancelButton> : null}
                 {<AddSetButton onClick={addSet}>Add set</AddSetButton>}
+                {<DeleteExerciseButton onClick={props.removeExercise}>Delete</DeleteExerciseButton>}
             </div>
             <SetsContainer>
                 {
@@ -69,7 +85,7 @@ export const WorkoutSetsList = props => {
                                     return null;
                                 }
                                 let set = props.sets[id];
-                                // If the set with the given ID has been edited, use values from editedSets
+                                // If the set with the given ID has been edited, use values from the editedSets array
                                 if (Object.keys(editedSets).includes(id.toString())) {
                                     set = editedSets[id];
                                 }

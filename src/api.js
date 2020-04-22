@@ -31,8 +31,11 @@ export const apiAddWorkout = workout => {
 };
 
 export const apiSaveExerciseChanges = (id, exercise) => {
-    console.log(exercise);
     return axios.put(`${BASE_URL}/api/exercises/${id}`, exercise);
+};
+
+export const apiDeleteExercise = id => {
+    return axios.delete(`${BASE_URL}/api/exercises/${id}`);
 };
 
 // Add Auth token to every request

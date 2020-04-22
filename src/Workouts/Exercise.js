@@ -117,6 +117,10 @@ export const Exercise = props => {
         setHasFailed(true);
     };
 
+    const removeExercise = () => {
+        props.removeExercise(props.id);
+    };
+
     const animationState = hasFailed ? 'failed' : hasSucceeded ? 'active' : 'inActive';
     let textState = hasFailed ? 'Failed' : showLoading ? 'Saving' : hasSucceeded ? 'Saved' : exerciseInfo ? exerciseInfo.name : 'Exercise';
     return (
@@ -136,7 +140,7 @@ export const Exercise = props => {
                 }
             </ExerciseName>
             {exercise != null
-                ? < WorkoutSetsList sets={sets} exercise={exercise} saveChanges={saveChanges} />
+                ? < WorkoutSetsList sets={sets} exercise={exercise} saveChanges={saveChanges} removeExercise={removeExercise} />
                 : null
             }
         </StyledExercise >

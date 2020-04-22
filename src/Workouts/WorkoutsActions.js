@@ -1,4 +1,4 @@
-import { apiGetWorkoutsByUserID, apiAddWorkout, apiSaveExerciseChanges } from '../api';
+import { apiGetWorkoutsByUserID, apiAddWorkout, apiSaveExerciseChanges, apiDeleteExercise } from '../api';
 import { schema, normalize } from 'normalizr';
 
 export const ADD_WORKOUTS = 'ADD_WORKOUTS';
@@ -7,6 +7,7 @@ export const ADD_SETS = 'ADD_SETS';
 export const ADD_EXERCISES_INFO = 'ADD_EXERCISES_INFO';
 export const ADD_NEW_WORKOUT = 'ADD_NEW_WORKOUT';
 export const UPDATE_EXERCISE = 'UPDATE_EXERCISE';
+export const DELETE_EXERCISE = 'DELETE_EXERCISE';
 
 export const getWorkoutsByUserID = userID => {
     return async dispatch => {
@@ -37,25 +38,19 @@ export const getWorkoutsByUserID = userID => {
     };
 };
 
-export const saveExerciseChanges = (exercise) => {
+export const saveExerciseChanges = exercise => {
     return async dispatch => {
-        try {
-            const response = await apiSaveExerciseChanges(exercise.id, exercise);
-            const sets = new schema.Entity('sets', {
-                sets: ['sets'],
-            });
-            const normalizedSets = normalize(response.data.sets, [sets]);
-            const obj = {
-                ...response.data,
-                sets: normalizedSets.entities.sets
-            };
-            dispatch(_updateExercise(obj));
-            return Promise.resolve();
-        }
-        catch (e) {
-            console.log(e);
-            return Promise.reject(e);
-        }
+        // Let exceptions bubble up so that Exercise component can react to it
+        const response = await apiSaveExerciseChanges(exercise.id, exercise);
+        const sets = new schema.Entity('sets', {
+            sets: ['sets'],
+        });
+        const normalizedSets = normalize(response.data.sets, [sets]);
+        const obj = {
+            ...response.data,
+            sets: normalizedSets.entities.sets
+        };
+        dispatch(_updateExercise(obj));
     };
 };
 
@@ -66,15 +61,23 @@ const _updateExercise = exercise => {
     };
 };
 
+export const deleteExercise = (workoutID, exerciseID) => {
+    return async dispatch => {
+        const response = await apiDeleteExercise(exerciseID);
+        dispatch(_deleteExercise(workoutID, exerciseID));
+    };
+};
+
+const _deleteExercise = (workoutID, exerciseID) => {
+    return {
+        type: DELETE_EXERCISE,
+        data: { workoutID, exerciseID }
+    };
+};
+
 export const addNewWorkout = workout => {
     return async dispatch => {
-        try {
-            var response = await apiAddWorkout(workout);
-        }
-        catch (e) {
-            console.log('Cannot connect to a server');
-            return;
-        }
+        var response = await apiAddWorkout(workout);
         dispatch(_addWorkout(response.data.workout));
     };
 };
