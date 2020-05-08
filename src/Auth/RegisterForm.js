@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { AuthWrapper, AuthContainer, AuthTitle, AuthItem, Field, Button, Error, StyledLink, AuthBox } from '../StyledComponents';
+import { AuthWrapper, AuthContainer, AuthTitle, AuthItem, Field, Button, Error, StyledLink, AuthBox } from './AuthComponents';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { useHistory } from 'react-router-dom';

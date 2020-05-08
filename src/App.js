@@ -9,7 +9,6 @@ function App() {
   return (
     <Router>
       <PrivateRoute exact path="/" component={MainContainer} />
-      <Route exact path="/login" component={LoginForm} />
       <Route exact path="/register" component={RegisterForm} />
     </Router>
   );

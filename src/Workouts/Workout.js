@@ -1,21 +1,9 @@
 import React from 'react';
-import styled from 'styled-components';
+import { StyledWorkout, ExercisesContainer } from './WorkoutComponents';
 import { useSelector, useDispatch } from 'react-redux';
 import { Exercise } from './Exercise';
 import moment from 'moment';
-import { deleteExercise } from './WorkoutsActions';
-
-const ExercisesContainer = styled.div`
-display: flex;
-flex-direction: row;
-position: relative;
-`;
-
-const StyledWorkout = styled.div`
-background: #b09997;
-margin-top: 30px;
-padding: 10px 10px;
-`;
+import { deleteExercise, saveExerciseChanges } from './WorkoutsActions';
 
 export const Workout = props => {
     const workout = useSelector(state => state.workouts.byId[props.id]);
@@ -33,7 +21,7 @@ export const Workout = props => {
                 {workout && workout.exercises ?
                     <>
                         {workout.exercises.map(id => {
-                            return <Exercise id={id} key={id} removeExercise={removeExercise} />;
+                            return <Exercise id={id} key={id} removeExercise={removeExercise} saveExerciseChanges={saveExerciseChanges} />;
                         })}
                     </>
                     : 'Could not load exercises. Try again.'}

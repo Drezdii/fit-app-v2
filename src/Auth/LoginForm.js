@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useFormik } from 'formik';
-import { AuthWrapper, AuthContainer, AuthBox, AuthItem, AuthTitle, Field, Button, Error, StyledLink } from '../StyledComponents';
+import { AuthContainer, AuthBox, AuthItem, AuthTitle, Field, Button, Error, StyledForm } from './AuthComponents';
 import { setUser } from './AuthActions';
 import { useDispatch } from 'react-redux';
 import { getPayload } from '../core/TokenValidator';
@@ -76,26 +76,23 @@ export const LoginForm = () => {
     });
 
     return (
-        <AuthWrapper>
-            <AuthBox>
-                <form onSubmit={formik.handleSubmit}>
-                    <AuthTitle>FIT APP</AuthTitle>
-                    <AuthContainer>
-                        <AuthItem>
-                            <Field name='login' onChange={formik.handleChange} value={formik.values.login} placeholder='Login' />
-                        </AuthItem>
-                        <AuthItem>
-                            <Field name='password' type='password' onChange={formik.handleChange} value={formik.values.password} placeholder='Password' />
-                        </AuthItem>
-                        {formik.status && formik.status.api ? <Error>{formik.status.api}</Error> : null}
-                        <StyledLink to='/register'>Register</StyledLink>
-                        <AuthItem>
-                            <Button type='submit'>{formik.isSubmitting ? <FontAwesomeIcon icon={faSpinner} spin /> : 'Login'}</Button>
-                        </AuthItem>
-                    </AuthContainer>
+        <div>
+            <StyledForm onSubmit={formik.handleSubmit}>
+                <AuthTitle>Sign in</AuthTitle>
+                <AuthContainer>
+                    <AuthItem>
+                        <Field name='login' onChange={formik.handleChange} value={formik.values.login} placeholder='Login' />
+                    </AuthItem>
+                    <AuthItem>
+                        <Field name='password' type='password' onChange={formik.handleChange} value={formik.values.password} placeholder='Password' />
+                    </AuthItem>
+                    {formik.status && formik.status.api ? <Error>{formik.status.api}</Error> : null}
+                    <AuthItem>
+                        <Button type='submit'>{formik.isSubmitting ? <FontAwesomeIcon icon={faSpinner} spin /> : 'Login'}</Button>
+                    </AuthItem>
+                </AuthContainer>
 
-                </form>
-            </AuthBox>
-        </AuthWrapper>
+            </StyledForm>
+        </div>
     );
 };
