@@ -1,7 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { AuthWrapper, AuthContainer, AuthTitle, AuthItem, Field, Button, Error, StyledLink, AuthBox } from './AuthComponents';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { useHistory } from 'react-router-dom';
 import { getPayload } from '../core/TokenValidator';
 import { setUser } from './AuthActions';
@@ -9,12 +6,36 @@ import { useDispatch } from 'react-redux';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { apiRegisterUser } from '../api';
+import { CssBaseline, Container, TextField, Button, Typography, Avatar, Link } from '@material-ui/core';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import { makeStyles } from '@material-ui/core/styles';
+
+const useStyles = makeStyles(theme => ({
+    paper: {
+        marginTop: theme.spacing(12),
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+    },
+    avatar: {
+        margin: theme.spacing(1),
+        backgroundColor: theme.palette.primary.main,
+    },
+    form: {
+        width: '100%', // Fix IE 11 issue.
+        marginTop: theme.spacing(1),
+    },
+    submit: {
+        margin: theme.spacing(3, 0, 2),
+    }
+}));
 
 export const RegisterForm = () => {
     const validationSchema = Yup.object({
         login: Yup.string().min(3, 'At least 3 characters'),
         password: Yup.string().min(8, 'At least 8 characters'),
-        confirmPassword: Yup.string().oneOf([Yup.ref('password'), null], 'Passwords must match')
+        confirmPassword: Yup.string().oneOf([Yup.ref('password'), null], 'Passwords don\'t match'),
+        email: Yup.string().email('Please provide a valid e-mail address')
     });
 
     const initialValues = {
@@ -64,7 +85,7 @@ export const RegisterForm = () => {
             if (e.response !== undefined) {
                 // Iterate over errors returned from API
                 let apiErrors = {};
-                e.response.data.errors.forEach(error => {
+                e.response.data.forEach(error => {
                     apiErrors[error.type] = error.message;
                 });
                 actions.setStatus(apiErrors);
@@ -87,42 +108,87 @@ export const RegisterForm = () => {
             handleRegister(values, actions);
         }
     });
-    const loginError = formik.errors.login && formik.touched.login;
-    const emailError = formik.errors.email && formik.touched.email;
-    const passwordError = formik.errors.password && formik.touched.password;
-    const confirmPasswordError = formik.errors.confirmPassword && formik.touched.confirmPassword;
-    return (
-        // Call setFieldTouched in onInput event to start validating the fields onChanged instead of onBlur
-        <AuthWrapper>
-            <AuthBox>
-                <form onSubmit={formik.handleSubmit}>
-                    <AuthTitle>FIT APP</AuthTitle>
-                    <AuthContainer>
-                        <AuthItem>
-                            <Field placeholder="Login" name="login" onChange={formik.handleChange} onFocus={formik.handleBlur} onInput={() => formik.setFieldTouched('login', true, true)} />
-                            {formik.status && formik.status.login ? <Error>{formik.status.login}</Error> : loginError ? <Error>{formik.errors.login}</Error> : null}
-                        </AuthItem>
-                        <AuthItem>
-                            <Field placeholder="Email" name="email" onChange={formik.handleChange} onInput={() => formik.setFieldTouched('email', true, true)} />
-                            {formik.status && formik.status.email ? <Error>{formik.status.email}</Error> : emailError ? <Error>{formik.errors.email}</Error> : null}
-                        </AuthItem>
 
-                        <AuthItem>
-                            <Field placeholder="Password" name="password" type="password" onInput={() => formik.setFieldTouched('password', true, true)} onChange={formik.handleChange} />
-                            {formik.status && formik.status.password ? <Error>{formik.status.password}</Error> : passwordError ? <Error>{formik.errors.password}</Error> : null}
-                        </AuthItem>
-                        <AuthItem>
-                            <Field placeholder="Confirm password" name="confirmPassword" type="password" onChange={formik.handleChange} onInput={() => formik.setFieldTouched('confirmPassword', true, true)} />
-                            {formik.status && formik.status.confirmPassword ? <Error>{formik.status.confirmPassword}</Error> : confirmPasswordError ? <Error>{formik.errors.confirmPassword}</Error> : null}
-                            {formik.status && formik.status.api ? <Error>{formik.status.api}</Error> : null}
-                        </AuthItem>
-                        <StyledLink to="/login">Login</StyledLink>
-                        <AuthItem>
-                            <Button type="submit">{formik.isSubmitting ? <FontAwesomeIcon icon={faSpinner} spin /> : 'Register'}</Button>
-                        </AuthItem>
-                    </AuthContainer>
+    const classes = useStyles();
+
+    const loginError = formik.errors.login !== undefined || (formik.status && formik.status.login !== undefined);
+    const emailError = formik.errors.email !== undefined || (formik.status && formik.status.email !== undefined);
+    const passwordError = formik.errors.password !== undefined || (formik.status && formik.status.password !== undefined);
+    const confirmPasswordError = formik.errors.confirmPassword !== undefined || (formik.status && formik.status.confirmPassword !== undefined);
+    return (
+        <Container maxWidth="sm">
+            <CssBaseline />
+            <div className={classes.paper}>
+                <Avatar className={classes.avatar}>
+                    <LockOutlinedIcon />
+                </Avatar>
+                <Typography component="h1" variant="h5">Register account</Typography>
+                <form onSubmit={formik.handleSubmit} noValidate className={classes.form}>
+                    <TextField
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                        id="login"
+                        label="Login"
+                        name="login"
+                        autoFocus
+                        error={loginError}
+                        onChange={formik.handleChange}
+                        helperText={(formik.status && formik.status.login) || formik.errors.login}
+                    />
+                    <TextField
+                        variant="outlined"
+                        margin="normal"
+                        fullWidth
+                        id="email"
+                        label="E-mail"
+                        name="email"
+                        required
+                        autoComplete="email"
+                        error={emailError}
+                        helperText={formik.errors.email}
+                        onChange={formik.handleChange}
+                    />
+                    <TextField
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                        id="password"
+                        type="password"
+                        label="Password"
+                        name="password"
+                        error={passwordError}
+                        helperText={formik.errors.password}
+                        onChange={formik.handleChange}
+                    />
+                    <TextField
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                        id="confirmPassword"
+                        type="password"
+                        label="Confirm Password"
+                        name="confirmPassword"
+                        error={confirmPasswordError}
+                        helperText={formik.errors.confirmPassword}
+                        onChange={formik.handleChange}
+                    />
+                    <Link href="/login" variant="body2">
+                        Sign in instead
+                    </Link>
+                    <Button
+                        className={classes.submit}
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        color="primary"
+                    >Register</Button>
                 </form>
-            </AuthBox>
-        </AuthWrapper>
+            </div>
+        </Container>
+
     );
 };

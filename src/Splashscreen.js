@@ -6,7 +6,6 @@ import { LoginForm } from './Auth/LoginForm';
 const Fullscreen = styled.div`
 width: 100%;
 height: 100%;
-background: #673AB7;
 `;
 
 const CenteredContainer = styled(Container)`

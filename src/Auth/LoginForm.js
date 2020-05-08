@@ -1,14 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import { useFormik } from 'formik';
-import { AuthContainer, AuthBox, AuthItem, AuthTitle, Field, Button, Error, StyledForm } from './AuthComponents';
+import { Avatar, Button, CssBaseline, TextField, FormControlLabel, Checkbox, Link, Grid, Box, Typography, Container } from '@material-ui/core';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import { makeStyles } from '@material-ui/core/styles';
 import { setUser } from './AuthActions';
 import { useDispatch } from 'react-redux';
 import { getPayload } from '../core/TokenValidator';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { useHistory } from 'react-router-dom';
 import { apiLoginUser } from '../api';
 
+const useStyles = makeStyles(theme => ({
+    paper: {
+        marginTop: theme.spacing(8),
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+    },
+    avatar: {
+        margin: theme.spacing(1),
+        backgroundColor: theme.palette.secondary.main,
+    },
+    form: {
+        width: '100%', // Fix IE 11 issue.
+        marginTop: theme.spacing(1),
+    },
+    submit: {
+        margin: theme.spacing(3, 0, 2),
+    },
+    error: {
+        color: theme.palette.error.main
+    }
+}));
 
 export const LoginForm = () => {
     const initialValues = {
@@ -75,24 +97,66 @@ export const LoginForm = () => {
         }
     });
 
+    const classes = useStyles();
     return (
-        <div>
-            <StyledForm onSubmit={formik.handleSubmit}>
-                <AuthTitle>Sign in</AuthTitle>
-                <AuthContainer>
-                    <AuthItem>
-                        <Field name='login' onChange={formik.handleChange} value={formik.values.login} placeholder='Login' />
-                    </AuthItem>
-                    <AuthItem>
-                        <Field name='password' type='password' onChange={formik.handleChange} value={formik.values.password} placeholder='Password' />
-                    </AuthItem>
-                    {formik.status && formik.status.api ? <Error>{formik.status.api}</Error> : null}
-                    <AuthItem>
-                        <Button type='submit'>{formik.isSubmitting ? <FontAwesomeIcon icon={faSpinner} spin /> : 'Login'}</Button>
-                    </AuthItem>
-                </AuthContainer>
+        <Container maxWidth="xs">
+            <CssBaseline />
+            <div className={classes.paper}>
+                <Avatar className={classes.avatar}>
+                    <LockOutlinedIcon />
+                </Avatar>
+                <Typography component="h1" variant="h5">Sign in</Typography>
+                <form className={classes.form} noValidate onSubmit={formik.handleSubmit}>
+                    <TextField
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                        id="login"
+                        label="Login"
+                        name="login"
+                        autoComplete="email"
+                        autoFocus
+                        onChange={formik.handleChange}
+                        value={formik.values.login}
+                    />
+                    <TextField
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                        name="password"
+                        label="Password"
+                        type="password"
+                        id="password"
+                        autoComplete="current-password"
+                        onChange={formik.handleChange}
+                        value={formik.values.password}
+                    />
+                    <Typography component="p" variant="subtitle2" className={classes.error}>{formik.status && formik.status.api}</Typography>
+                    <FormControlLabel
+                        control={<Checkbox value="remember" color="primary" />}
+                        label="Remember me"
+                    />
+                    <Button
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        color="primary"
+                        className={classes.submit}
+                    >Sign in</Button>
+                    <Grid container>
+                        <Grid item>
+                            <Link href="/register" variant="body2">
+                                {'Don\'t have an account? Sign Up'}
+                            </Link>
+                        </Grid>
+                    </Grid>
+                </form>
+            </div>
+            <Box mt={8}>
 
-            </StyledForm>
-        </div>
+            </Box>
+        </Container>
     );
 };
