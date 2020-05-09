@@ -176,7 +176,7 @@ export const RegisterForm = () => {
                         helperText={formik.errors.confirmPassword}
                         onChange={formik.handleChange}
                     />
-                    <Link href="/login" variant="body2">
+                    <Link href="/" variant="body2">
                         Sign in instead
                     </Link>
                     <Button

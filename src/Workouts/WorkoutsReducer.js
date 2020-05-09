@@ -59,8 +59,7 @@ export const workoutsReducer = (state = initialState, action) => {
             // Default to an empty array because removing sets will pass empty sets array to this reducer
             const sets = action.data.sets !== undefined ? Object.keys(action.data.sets).map(id => Number(id)) : [];
             // All sets with deleted sets filtered out
-            const filteredSets = [...state.exercises[action.data.id].sets, ...sets];
-            //.filter(id => !action.data.deletedSets.includes(id));
+            const filteredSets = [...state.exercises[action.data.id].sets, ...sets].filter(id => !action.data.deletedSetsIDs.includes(id));
             return {
                 ...state,
                 sets: {

@@ -1,18 +1,13 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
-import { CompletedCheckBox, CheckBox, CheckMark, RepsInput } from './WorkoutComponents';
-
-const Container = styled.div`
-display: flex;
-margin-top: 5px;
-`;
+import { ListItem, ListItemIcon, Checkbox, TextField, ListItemSecondaryAction, IconButton } from '@material-ui/core';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 // Rename from Set to not collide with build-in Set class
-export const WorkoutSet = ({ set, handleChange, handleRemove }) => {
+export const WorkoutSet = ({ set, handleChange, handleRemove, selected, selectItem }) => {
     const handleReps = input => {
         const newSet = {
             ...set,
-            reps: Number(input.target.value) || 0 // Default to 0 if NaN was provided
+            reps: Number(input.target.value)
         };
 
         handleChange(newSet);
@@ -21,7 +16,7 @@ export const WorkoutSet = ({ set, handleChange, handleRemove }) => {
     const handleWeight = input => {
         const newSet = {
             ...set,
-            weight: Number(input.target.value) || 0 // Default to 0 if NaN was provided
+            weight: Number(input.target.value)
         };
 
         handleChange(newSet);
@@ -35,25 +30,27 @@ export const WorkoutSet = ({ set, handleChange, handleRemove }) => {
 
         handleChange(newSet);;
     };
-
     return (
         set != null ?
-            <Container>
-                <div>
-                    <CompletedCheckBox>
-                        <CheckBox type='checkbox' checked={set.completed} onChange={handleCompletion}></CheckBox>
-                        <CheckMark></CheckMark>
-                    </CompletedCheckBox>
-                </div>
-                <div>
-                    {<RepsInput value={set.reps} onChange={handleReps} />}
+            <ListItem selected={selected} onClick={() => selectItem(set.id)}>
+                <ListItemIcon>
+                    <Checkbox
+                        checked={set.completed}
+                        edge="end"
+                        disableRipple
+                        onChange={handleCompletion}
+                    />
+                </ListItemIcon>
+                {<TextField type="number" variant="outlined" size="small" value={set.reps} onChange={handleReps} />}
                 x
-                {<RepsInput value={set.weight} onChange={handleWeight} />}
-                </div>
-                <div>
-                    <button onClick={() => handleRemove(set.id)}>X</button>
-                </div>
-            </Container>
+                    {<TextField type="number" variant="outlined" size="small" value={set.weight} onChange={handleWeight} inputProps={{ min: 0, step: 2.5 }} />}
+
+                <ListItemSecondaryAction>
+                    <IconButton edge="end" onClick={() => handleRemove(set.id)}>
+                        <DeleteIcon />
+                    </IconButton>
+                </ListItemSecondaryAction>
+            </ListItem>
             : null
 
     );

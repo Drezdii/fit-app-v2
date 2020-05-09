@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { WorkoutSet } from './WorkoutSet';
 import shortid from 'shortid';
+import { List } from '@material-ui/core';
 
 const SetsContainer = styled.div``;
 
@@ -29,6 +30,7 @@ export const WorkoutSetsList = props => {
     const [editedSets, setEditedSets] = useState({});
     const [addedSetsIDs, setAddedSetsIDs] = useState([]);
     const [deletedSetsIDs, setDeletedSetsIDs] = useState([]);
+    const [selectedItem, setSelectedItem] = useState(0);
 
     const handleChange = set => {
         setEditedSets({ ...editedSets, [set.id]: { ...set } });
@@ -76,7 +78,7 @@ export const WorkoutSetsList = props => {
                 {<AddSetButton onClick={addSet}>Add set</AddSetButton>}
                 {<DeleteExerciseButton onClick={props.removeExercise}>Delete</DeleteExerciseButton>}
             </div>
-            <SetsContainer>
+            <List>
                 {
                     <div>
                         {allSetsIDs.map(id => {
@@ -88,12 +90,11 @@ export const WorkoutSetsList = props => {
                             if (Object.keys(editedSets).includes(id.toString())) {
                                 set = editedSets[id];
                             }
-
-                            return <WorkoutSet set={set} key={id} handleChange={handleChange} handleRemove={removeSet} />;
+                            return <WorkoutSet selectItem={setSelectedItem} selected={selectedItem === id} set={set} key={id} handleChange={handleChange} handleRemove={removeSet} />;
                         })}
                     </div>
                 }
-            </SetsContainer>
+            </List>
         </>
     );
 };

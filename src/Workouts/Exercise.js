@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { StyledExercise, AnimationBar, ExerciseName } from './WorkoutComponents';
 import { WorkoutSetsList } from './WorkoutSetsList';
 import { variants, loadingVariant } from './WorkoutAnimations';
+import { Container, Card, CardContent } from '@material-ui/core';
 
 export const Exercise = props => {
     const exercise = useSelector(state => state.workouts.exercises[props.id]);
@@ -66,7 +67,7 @@ export const Exercise = props => {
     const animationState = hasFailed ? 'failed' : hasSucceeded ? 'active' : 'inActive';
     let textState = hasFailed ? 'Failed' : showLoading ? 'Saving' : hasSucceeded ? 'Saved' : exerciseInfo ? exerciseInfo.name : 'Exercise';
     return (
-        <StyledExercise>
+        <Card>
             <ExerciseName
                 animate={animationState}
                 variants={variants}
@@ -85,6 +86,7 @@ export const Exercise = props => {
                 ? < WorkoutSetsList sets={sets} exercise={exercise} saveChanges={saveChanges} removeExercise={removeExercise} />
                 : null
             }
-        </StyledExercise >
+
+        </Card>
     );
 };
